@@ -11,11 +11,15 @@ import Parse
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    // IBOutlets
     @IBOutlet weak var tableview: UITableView!
+    
+    // Local Constants & Variables
+    var currentDataSource : [PFObject?] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         defer {
             parseTest()
         }
@@ -30,6 +34,25 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         } else {
             print("The was a problem")
         }
+    }
+    
+    func loadData() -> [PFObject?] {
+        
+        // Set Class Name
+        let query = PFQuery(className:"JournalEntries")
+        query.findObjectsInBackground(block: {(objects : [PFObject]?, error: Error?) -> Void in
+            if error == nil {
+                
+                if let returnedObjects = objects {
+                    for object in returnedObjects {
+                        print("FOUND OBJECT: \(object)")
+                    }
+                    self.currentDataSource = returnedObjects
+                }
+            }
+        })
+        
+        return currentDataSource
     }
     
     func parseTest() {
@@ -77,13 +100,37 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return currentDataSource.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        // Parse Object
+        let post = currentDataSource[indexPath.row]
+        
+        //TODO: FIX IMAGE LOAD
+        
+        
+//        let userImageFile = post?["image"] as! PFFile
+//        userImageFile.getDataInBackground(block: {(imageData: NSData?, error: Error?) -> Void in
+//        
+//        })
+//        userImageFile.getDataInBackgroundWithBlock {(imageData: NSData?, error: NSError?) -> Void in
+//            if error == nil {
+//                if let imageData = imageData {
+//                    let image = UIImage(data:imageData)
+//                }
+//            }
+//        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PostCell
-        cell.imageview.transform.rotated(by: CGFloat(M_PI_2))
+        cell.title.text = post?["title"] as? String
+        cell.textview.text = post?["body"] as? String
+        cell.date.text = post?["date"] as? String
+        cell.username.text = post?["username"] as? String
+        
+        
+//        cell.imageview.transform.rotated(by: CGFloat(M_PI_2))
         // cell.imageview.image =
         // Set Fields
         
