@@ -15,13 +15,21 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     // OUTLETS
     @IBOutlet weak var textview: UITextView!
     @IBOutlet weak var imageview: UIImageView!
+    @IBOutlet weak var titleLabel: UITextField!
     
     // Local Properties
     var picker = UIImagePickerController()
     let locationManager = CLLocationManager()
+    // Add UIImage var
+    var imageToBeSaved : UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        defer {
+            // Parse Test
+            // parseTest()
+        }
 
         // Do any additional setup after loading the view.
         self.title = "Compose"
@@ -33,12 +41,17 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
-        // Parse Test
-        parseTest()
+        // Save Button
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(writeToParse))
         
+        // Title Become First Responder
+        titleLabel.becomeFirstResponder()
     }
     
     @IBAction func capturePhoto(_ sender: Any) {
+        
+        titleLabel.resignFirstResponder()
+        textview.resignFirstResponder()
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             picker.allowsEditing = false
@@ -59,32 +72,66 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     @IBAction func captureLocation(_ sender: Any) {
         
+        titleLabel.resignFirstResponder()
+        textview.resignFirstResponder()
         
     }
     
     func parseTest() {
-        
-//        @IBOutlet weak var imageview: UIImageView!
-//        @IBOutlet weak var title: UILabel!
-//        @IBOutlet weak var entry: UILabel!
-//        @IBOutlet weak var username: UILabel!
-//        @IBOutlet weak var date: UILabel!
-        
-        // JournalEntries
+        // Journal Entry
         let entry = PFObject(className:"JournalEntries")
-        entry["title"] = "Test Object"
-        entry["entry"] = "This is a test message"
+        
+        // Image
+        if let imageData = UIImagePNGRepresentation(imageToBeSaved!) {
+            let imageFile = PFFile(name:"image.jpg", data:imageData)
+            entry["image"] = imageFile
+        } else {
+            print("Sumting Wong")
+        }
+    
+        entry["title"] = "PICTURE SAMPLE"
+        entry["body"] = "This is a test message"
         entry["username"] = "RICARDO"
         entry["date"] = "06152017"
         entry.saveInBackground { (success, error) in
             if success {
-                print("Object Saved")
+                print("FINISHED")
             }
             
             if (error != nil) {
                 print("Error: \(String(describing: error?.localizedDescription))")
             }
-            
+        }
+    }
+    
+    func writeToParse() {
+        
+        // Journal Entry
+        let entry = PFObject(className:"JournalEntries")
+        
+        // Image
+        if let imageData = UIImageJPEGRepresentation(imageToBeSaved!, 0.75) {
+            let imageFile = PFFile(name:"image.jpg", data:imageData)
+            entry["image"] = imageFile
+        } else {
+            print("Something Wrong")
+        }
+        
+        // Date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE, MMM d, yyyy @ h:mm a"
+        
+        entry["title"] = titleLabel.text
+        entry["body"] = textview.text
+        entry["username"] = "RICARDO"
+        entry["date"] = dateFormatter.string(from: Date())
+        entry.saveInBackground { (success, error) in
+            if success {
+                print("FINISHED")
+            }
+            if (error != nil) {
+                print("Error: \(String(describing: error?.localizedDescription))")
+            }
         }
     }
 
@@ -98,12 +145,19 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
+        // COMPRESS IMAGE
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            //var tempImage:UIImage = editingInfo[UIImagePickerControllerOriginalImage] as UIImage
-            imageview.image = image
+
+            // Compress Image Going Up
+            imageToBeSaved = UIImage.init(data:UIImageJPEGRepresentation(image, 0.75)!)
+            imageview.image = imageToBeSaved
+            
             print("IN DELEGATE")
+            //self.writeToParse()
         }
-        picker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true) { 
+            
+        }
     }
     
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -112,5 +166,14 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-
+    //MARK: - Image Transform
+    
+//    func imageTransform(image : UIImage) -> UIImage {
+//        
+//        
+//        
+//        
+//        return
+//    }
+    
 }

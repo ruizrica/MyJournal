@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -15,6 +16,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        defer {
+            parseTest()
+        }
+        
         self.title = "My Journal"
     }
 
@@ -25,6 +30,44 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         } else {
             print("The was a problem")
         }
+    }
+    
+    func parseTest() {
+        
+        // REMINDER: Discuss Block Structure
+        
+        // Set Class Name
+        let query = PFQuery(className:"JournalEntries")
+        
+        // CRUD - READ ONE
+        // - - - - - - - - - - - - - - - - - - - - - - -
+        // WORKING
+//        query.getObjectInBackground(withId: "UmOtZWykAu", block: {(object : PFObject?, parseError : Error?) -> Void in
+//            if parseError == nil && object != nil {
+//                
+//                if let returnedObject = object {
+//                    print(returnedObject)
+//                }
+//            } else {
+//                
+//                if let returnedError = parseError {
+//                    print(returnedError)
+//                }
+//            }
+//        })
+
+        // CRUD - READ ALL
+        // - - - - - - - - - - - - - - - - - - - - - - -
+        // WORKING
+
+        query.findObjectsInBackground(block: {(objects : [PFObject]?, error: Error?) -> Void in
+            if error == nil {
+                
+                for object in objects! {
+                    print("FOUND OBJECT: \(object)")
+                }
+            }
+        })
     }
 
     
@@ -40,7 +83,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PostCell
-        
+        cell.imageview.transform.rotated(by: CGFloat(M_PI_2))
+        // cell.imageview.image =
         // Set Fields
         
         
