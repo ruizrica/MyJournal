@@ -7,6 +7,12 @@
 //
 
 import UIKit
+import Parse
+
+//
+// Download Parse Framework From:
+// https://tinyurl.com/y7gquj7m
+//
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
