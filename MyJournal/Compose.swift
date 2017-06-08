@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import Parse
 
 class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate {
 
@@ -31,6 +32,9 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         // Core Location Setup
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        // Parse Test
+        parseTest()
         
     }
     
@@ -56,6 +60,32 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     @IBAction func captureLocation(_ sender: Any) {
         
         
+    }
+    
+    func parseTest() {
+        
+//        @IBOutlet weak var imageview: UIImageView!
+//        @IBOutlet weak var title: UILabel!
+//        @IBOutlet weak var entry: UILabel!
+//        @IBOutlet weak var username: UILabel!
+//        @IBOutlet weak var date: UILabel!
+        
+        // JournalEntries
+        let entry = PFObject(className:"JournalEntries")
+        entry["title"] = "Test Object"
+        entry["entry"] = "This is a test message"
+        entry["username"] = "RICARDO"
+        entry["date"] = "06152017"
+        entry.saveInBackground { (success, error) in
+            if success {
+                print("Object Saved")
+            }
+            
+            if (error != nil) {
+                print("Error: \(String(describing: error?.localizedDescription))")
+            }
+            
+        }
     }
 
     //MARK: - Picker Delegates

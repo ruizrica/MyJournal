@@ -4,24 +4,65 @@
 //
 //  Created by Ricardo Ruiz on 6/7/17.
 //  Copyright © 2017 Ricardo Ruiz. All rights reserved.
-//
+
 
 import UIKit
-import Parse
 
-//
+// Import Parse Framework
+// - - - - - - - - - - - - - - - - - - - -
 // Download Parse Framework From:
 // https://tinyurl.com/y7gquj7m
 //
 
+import Parse
+
+// Required Frameworks
+// https://stackoverflow.com/a/18319944
+// - - - - - - - - - - - - - - - - - - - -
+// AudioToolbox.framework
+// CFNetwork.framework
+// CoreGraphics.framework
+// CoreLocation.framework
+// libz.1.1.3.dylib
+// MobileCoreServices.framework
+// QuartzCore.framework
+// Security.framework
+// StoreKit.framework
+// SystemConfiguration.framework
+// libsqlite3.tbd
+//
+//
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    // API CONSTANTS
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // https://stackoverflow.com/a/35089932
+    //
+    let applicationId = "af74f915-ff5d-4795-82ee-b6ac8a1ba242"
+    let clientKey = "l1FTKSBmKtp26ZxE0UY97LW6T8VmPn2U"
+    // Also Remember to Allow Transport Security
+    let server = "https://parse.buddy.com/parse"
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - -
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Parse Server Configuration
+        let parseConfiguration = ParseClientConfiguration(block: { (ParseMutableClientConfiguration) -> Void in
+            ParseMutableClientConfiguration.applicationId = self.applicationId
+            ParseMutableClientConfiguration.clientKey = self.clientKey
+            ParseMutableClientConfiguration.server = self.server
+        })
+        
+        Parse.initialize(with: parseConfiguration)
+        
         return true
     }
 
