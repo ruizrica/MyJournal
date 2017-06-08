@@ -36,7 +36,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-    func loadData() -> [PFObject?] {
+    func loadData() {
         
         // Set Class Name
         let query = PFQuery(className:"JournalEntries")
@@ -48,11 +48,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                         print("FOUND OBJECT: \(object)")
                     }
                     self.currentDataSource = returnedObjects
+                    self.tableview.reloadData()
                 }
             }
         })
-        
-        return currentDataSource
     }
     
     func parseTest() {
