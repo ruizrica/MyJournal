@@ -30,8 +30,8 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             // Parse Test
             // parseTest()
         }
-
-        // Do any additional setup after loading the view.
+        
+        // Title
         self.title = "Compose"
         
         // Picker Delegate
@@ -42,10 +42,14 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         // Save Button
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(writeToParse))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(writeToParse))
         
         // Title Become First Responder
         titleLabel.becomeFirstResponder()
+        
+        // Offset Text Position
+        textview.setContentOffset(CGPoint.zero, animated: false)
+
     }
     
     @IBAction func capturePhoto(_ sender: Any) {
@@ -74,10 +78,10 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         titleLabel.resignFirstResponder()
         textview.resignFirstResponder()
-        
     }
     
     func parseTest() {
+        
         // Journal Entry
         let entry = PFObject(className:"JournalEntries")
         
@@ -110,7 +114,8 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         let entry = PFObject(className:"JournalEntries")
         
         // Image
-        if let imageData = UIImageJPEGRepresentation(imageToBeSaved!, 0.75) {
+        // UIImageJPEG returns NSDATA
+        if let imageData = UIImageJPEGRepresentation(imageToBeSaved!, 1.0) {
             let imageFile = PFFile(name:"image.jpg", data:imageData)
             entry["image"] = imageFile
         } else {
@@ -149,15 +154,14 @@ class Compose: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
 
             // Compress Image Going Up
-            imageToBeSaved = UIImage.init(data:UIImageJPEGRepresentation(image, 0.75)!)
+            imageToBeSaved = UIImage.init(data:UIImageJPEGRepresentation(image, 0.7)!)
             imageview.image = imageToBeSaved
-            
+        
             print("IN DELEGATE")
             //self.writeToParse()
         }
-        picker.dismiss(animated: true) { 
-            
-        }
+        
+        picker.dismiss(animated: true, completion: nil)
     }
     
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

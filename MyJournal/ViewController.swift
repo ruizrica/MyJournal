@@ -21,7 +21,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.viewDidLoad()
 
         defer {
-            parseTest()
+            //parseTest()
+            loadData()
         }
         
         self.title = "My Journal"
@@ -34,6 +35,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         } else {
             print("The was a problem")
         }
+    }
+    
+    @IBAction func refresh(_ sender: Any) {
+        loadData()
     }
     
     func loadData() {
@@ -107,31 +112,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // Parse Object
         let post = currentDataSource[indexPath.row]
         
-        //TODO: FIX IMAGE LOAD
-        
-        
-//        let userImageFile = post?["image"] as! PFFile
-//        userImageFile.getDataInBackground(block: {(imageData: NSData?, error: Error?) -> Void in
-//        
-//        })
-//        userImageFile.getDataInBackgroundWithBlock {(imageData: NSData?, error: NSError?) -> Void in
-//            if error == nil {
-//                if let imageData = imageData {
-//                    let image = UIImage(data:imageData)
-//                }
-//            }
-//        }
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PostCell
         cell.title.text = post?["title"] as? String
         cell.textview.text = post?["body"] as? String
         cell.date.text = post?["date"] as? String
         cell.username.text = post?["username"] as? String
-        
-        
-//        cell.imageview.transform.rotated(by: CGFloat(M_PI_2))
-        // cell.imageview.image =
-        // Set Fields
+        // Load Image From Parse
+        // https://stackoverflow.com/a/39926106
+        if let userImageFile = post?["image"] as? PFFile {
+            userImageFile.getDataInBackground(block: {
+                (data: Data?, error: Error?) in
+                
+                if error == nil {
+                    cell.imageview.image = UIImage(data:data!)
+                }
+            })
+        }
         
         
         return cell
