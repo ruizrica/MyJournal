@@ -117,6 +117,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.textview.text = post?["body"] as? String
         cell.date.text = post?["date"] as? String
         cell.username.text = post?["username"] as? String
+        cell.imageview.contentMode = UIViewContentMode.scaleAspectFill
+        cell.imageview.clipsToBounds = true
+        
         // Load Image From Parse
         // https://stackoverflow.com/a/39926106
         if let userImageFile = post?["image"] as? PFFile {
@@ -128,8 +131,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
             })
         }
-        
-        
         return cell
     }
     
@@ -139,15 +140,3 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
